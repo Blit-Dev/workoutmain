@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.workout-content,
+.food-content {
+    display: none;
+}
+
+.workout-content.active,
+.food-content.active {
+    display: block;
+}
+
+.workout-tab.active,
+.food-tab.active {
+    @apply bg-blue-600 text-white;
+}
+
+input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500;
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem;
+}
+
+.workout-card {
+    @apply transform transition-all duration-200 hover:shadow-lg;
+}
+
+.food-entry {
+    @apply bg-white rounded-lg shadow-md p-4;
+}
+
+.set-entry {
+    @apply transform transition-all duration-200;
+}
+
+.set-entry:hover {
+    @apply shadow-sm;
+}
+
+button {
+    @apply transform transition-all duration-200;
+}
+
+button:active {
+    @apply scale-95;
+}
+
+#toast {
+    @apply transform transition-all duration-300;
+}

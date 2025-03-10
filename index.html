@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <link href="./dist/style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-x-full opacity-0">
+        <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+            <span id="toast-message"></span>
+            <button onclick="hideToast()" class="ml-4 text-white hover:text-green-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- Navigation -->
+        <nav class="bg-blue-600 text-white fixed bottom-0 w-full">
+            <div class="flex justify-around items-center h-16">
+                <button onclick="showPage('workouts')" class="flex flex-col items-center w-1/2 py-2 focus:outline-none focus:bg-blue-700" id="workouts-tab">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h.5A2.5 2.5 0 0020 5.5V3.935M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945" />
+                    </svg>
+                    <span class="text-sm">Workouts</span>
+                </button>
+                <button onclick="showPage('food')" class="flex flex-col items-center w-1/2 py-2 focus:outline-none focus:bg-blue-700" id="food-tab">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="text-sm">Food Log</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 pb-16">
+            <!-- Workouts Page -->
+            <div id="workouts-page" class="page active p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold">Workouts</h1>
+                    <div id="current-date" class="text-gray-600"></div>
+                </div>
+
+                <!-- Workout Management Tabs -->
+                <div class="flex mb-4 bg-white rounded-lg shadow">
+                    <button onclick="showWorkoutTab('add')" class="flex-1 py-2 px-4 text-center focus:outline-none workout-tab active" data-tab="add">Add Workout</button>
+                    <button onclick="showWorkoutTab('log')" class="flex-1 py-2 px-4 text-center focus:outline-none workout-tab" data-tab="log">Log Exercise</button>
+                    <button onclick="showWorkoutTab('history')" class="flex-1 py-2 px-4 text-center focus:outline-none workout-tab" data-tab="history">History</button>
+                </div>
+
+                <!-- Add Workout Tab -->
+                <div id="add-workout-tab" class="workout-content active">
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <h2 class="text-lg font-semibold mb-2">Add New Workout</h2>
+                        <form id="workout-form" class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Workout Name</label>
+                                <input type="text" id="workout-name" class="mt-1 block w-full" required>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transform transition-transform active:scale-95">Add Workout</button>
+                        </form>
+                    </div>
+                    <div id="workout-list" class="space-y-4"></div>
+                </div>
+
+                <!-- Log Exercise Tab -->
+                <div id="log-workout-tab" class="workout-content hidden">
+                    <!-- Search Bar -->
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                        <div class="relative">
+                            <input type="text" id="workout-search" placeholder="Search workouts..." 
+                                class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="workout-log-list" class="space-y-4"></div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history-workout-tab" class="workout-content hidden">
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <h2 class="text-lg font-semibold mb-2">Select Date</h2>
+                        <input type="date" id="workout-date-picker" class="w-full mb-4">
+                        <!-- Search Bar for History -->
+                        <div class="relative mb-4">
+                            <input type="text" id="history-search" placeholder="Search in history..." 
+                                class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <div id="workout-history-list" class="space-y-4"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow mt-4">
+                        <h3 class="text-lg font-semibold p-4 border-b">Previous Workouts</h3>
+                        <div id="workout-date-list" class="divide-y"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Log Page -->
+            <div id="food-page" class="page hidden p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold">Food Log</h1>
+                    <div id="food-current-date" class="text-gray-600"></div>
+                </div>
+
+                <!-- Food Log Tabs -->
+                <div class="flex mb-4 bg-white rounded-lg shadow">
+                    <button onclick="showFoodTab('add')" class="flex-1 py-2 px-4 text-center focus:outline-none food-tab active" data-tab="add">Add Food</button>
+                    <button onclick="showFoodTab('history')" class="flex-1 py-2 px-4 text-center focus:outline-none food-tab" data-tab="history">History</button>
+                </div>
+
+                <!-- Add Food Tab -->
+                <div id="add-food-tab" class="food-content active">
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <h2 class="text-lg font-semibold mb-2">Add Food Entry</h2>
+                        <form id="food-form" class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Food Item</label>
+                                <input type="text" id="food-name" class="mt-1 block w-full" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Portion</label>
+                                <input type="text" id="food-portion" class="mt-1 block w-full" required>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transform transition-transform active:scale-95">Add Food</button>
+                        </form>
+                    </div>
+                    <div id="today-food-log" class="space-y-4"></div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history-food-tab" class="food-content hidden">
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <h2 class="text-lg font-semibold mb-2">Select Date</h2>
+                        <input type="date" id="food-date-picker" class="w-full mb-4">
+                        <div id="food-history-list" class="space-y-4"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow mt-4">
+                        <h3 class="text-lg font-semibold p-4 border-b">Previous Food Logs</h3>
+                        <div id="food-date-list" class="divide-y"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="./main.js"></script>
+</body>
+</html>
